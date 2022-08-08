@@ -1,0 +1,40 @@
+---
+defaults: &defaults
+  buildpacks:
+  - java-buildpack-openjdk-v4-49-1
+  memory: 1G
+  instances: 2
+  disk_quota: 1024M
+  organization: roytuts-com
+  stack: cflinuxfs3
+  
+applications:
+- name: service
+  target: https://api.roytuts.com/
+  space: app-prod
+  organization: roytuts-com
+  <<: *defaults
+  routes:
+  - route: prod.roytuts.com/serviceapi-prod
+  path: /service/
+  services:
+    - svcmysql
+  
+  env:
+     SPRING_PROFILE: prod
+     JAVA_OPTS: -Duser.timezone=America/New_York -Dappdynamics.http.proxyHost=proxy.roytuts.com -Dappdynamics.http.proxyPort=8080 -Dappdynamics.agent.applicationName=ServiceAPI -Dappdynamics.agent.tierName=service-api-prod
+     PROXY_HOST: proxy.roytuts.com
+     ssl_enabled: true
+- name: ui
+  target: https://ui.roytuts.com/
+  space: ui-prod
+  <<: *defaults
+  routes:
+  - route: prod.roytuts.com/ui-prod
+  path: /ui/
+
+  env:
+     SPRING_PROFILE: prod
+     JAVA_OPTS: -Duser.timezone=America/New_York -Dappdynamics.http.proxyHost=proxy.roytuts.com -Dappdynamics.http.proxyPort=8080 -Dappdynamics.agent.applicationName=UI -Dappdynamics.agent.tierName=ui-prod
+     PROXY_HOST: proxy.roytuts.com
+     ssl_enabled: true
