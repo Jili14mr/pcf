@@ -1,4 +1,3 @@
-...
 
 stage("Read Manifest Config") {
 	node {
